@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>Untuk Mutia Muhalisiah ♡</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        body: ['"Cormorant Garamond"', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: #07070c;
+            color: #f0e6e8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Three.js Canvas ── */
+        #three-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            overflow: hidden;
+        }
+        #three-bg canvas { display: block; width: 100%; height: 100%; }
+
+        /* ── Grain Overlay ── */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9998; opacity: 0.5;
+        }
+
+        /* ── Flash Overlay ── */
+        #flash {
+            position: fixed; inset: 0; z-index: 100;
+            background: radial-gradient(circle at 50% 50%, rgba(248,180,200,.7), rgba(7,7,12,.97));
+            opacity: 0; pointer-events: none;
+        }
+
+        /* ── Main ── */
+        main { position: relative; z-index: 1; }
+
+        /* ── Sections ── */
+        .page-section {
+            min-height: 100vh; min-height: 100dvh;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .s1-bg {
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(233,30,99,.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(232,168,124,.03) 0%, transparent 40%),
+                #07070c;
+        }
+        .s2-bg {
+            background:
+                radial-gradient(ellipse at 50% 40%, rgba(232,168,124,.07) 0%, transparent 45%),
+                #07070c;
+        }
+        .s3-bg {
+            background:
+                radial-gradient(ellipse at 30% 15%, rgba(248,180,200,.06) 0%, transparent 45%),
+                radial-gradient(ellipse at 75% 85%, rgba(232,168,124,.05) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(233,30,99,.03) 0%, transparent 50%),
+                #07070c;
+        }
+        .s4-bg {
+            background:
+                radial-gradient(ellipse at 50% 50%, rgba(233,30,99,.07) 0%, transparent 50%),
+                #07070c;
+        }
+
+        /* ── Decorative Rings ── */
+        .deco-ring {
+            position: absolute; border-radius: 50%;
+            border: 1px solid rgba(248,180,200,.04);
+            pointer-events: none;
+            animation: ringSpin 90s linear infinite;
+        }
+        @keyframes ringSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .deco-glow {
+            position: absolute; border-radius: 50%;
+            pointer-events: none; filter: blur(60px);
+            animation: glowDrift 20s ease-in-out infinite alternate;
+        }
+        @keyframes glowDrift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -20px) scale(1.15); }
+        }
+
+        /* ═══════════════════════════════════
+           ENVELOPE
+           ═══════════════════════════════════ */
+        .envelope-wrap {
+            perspective: 1200px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .envelope {
+            position: relative;
+            width: 220px; height: 145px;
+            transform-style: preserve-3d;
+        }
+        @media (min-width: 640px) {
+            .envelope { width: 300px; height: 195px; }
+        }
+
+        .env-body {
+            position: absolute; inset: 0;
+            background: linear-gradient(165deg, #e8a87c 0%, #d4a574 45%, #c4956a 100%);
+            border-radius: 8px;
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.4),
+                0 5px 20px rgba(232,168,124,.15),
+                inset 0 1px 0 rgba(255,255,255,.1);
+        }
+        .env-body::before {
+            content: '';
+            position: absolute; inset: 0; border-radius: 8px;
+            background:
+                linear-gradient(to bottom right, transparent 48.5%, rgba(0,0,0,.04) 48.5%, rgba(0,0,0,.04) 51.5%, transparent 51.5%),
+                linear-gradient(to bottom left, transparent 48.5%, rgba(0,0,0,.04) 48.5%, rgba(0,0,0,.04) 51.5%, transparent 51.5%);
+            pointer-events: none;
+        }
+        .env-body::after {
+            content: '';
+            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+            width: 70%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+        }
+
+        .env-flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 55%;
+            transform-origin: top center; z-index: 5;
+            transition: transform 1s cubic-bezier(.4,0,.2,1);
+            backface-visibility: visible;
+        }
+        .env-flap::before {
+            content: '';
+            position: absolute; top: -1px; left: -1%; width: 102%; height: 200%;
+            background: linear-gradient(180deg, #daa77a, #c99868);
+            clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+            filter: brightness(0.95);
+        }
+        .env-flap::after {
+            content: '';
+            position: absolute; top: -1px; left: -1%; width: 102%; height: 200%;
+            background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
+            clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+        }
+        .envelope.opened .env-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .env-seal {
+            position: absolute;
+            bottom: -4px; left: 50%; transform: translateX(-50%);
+            z-index: 6;
+            width: 30px; height: 30px;
+            background: radial-gradient(circle at 40% 40%, #f48fb1, #e91e63, #c2185b);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: #fff;
+            box-shadow: 0 3px 15px rgba(233,30,99,.5), inset 0 1px 0 rgba(255,255,255,.2);
+            transition: opacity .4s ease;
+        }
+        @media (min-width: 640px) {
+            .env-seal { width: 38px; height: 38px; font-size: 16px; bottom: -5px; }
+        }
+        .envelope.opened .env-seal { opacity: 0; }
+
+        .env-letter {
+            position: absolute;
+            width: 78%; height: 68%; left: 11%; bottom: 14%;
+            background: linear-gradient(to bottom, #fff5f7, #fce4ec, #fff0f3);
+            border-radius: 4px; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,.06);
+            transition: transform 1s cubic-bezier(.4,0,.2,1) .35s, opacity .5s ease 1.2s;
+            overflow: hidden;
+        }
+        .env-letter::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent, transparent 18px,
+                rgba(233,30,99,.04) 18px,
+                rgba(233,30,99,.04) 19px
+            );
+            pointer-events: none;
+        }
+        .envelope.opened .env-letter {
+            transform: translateY(-180%);
+            opacity: 0;
+        }
+        .env-letter span {
+            font-size: 1.5rem;
+            color: #e91e63;
+            text-shadow: 0 0 15px rgba(233,30,99,.3);
+        }
+        @media (min-width: 640px) { .env-letter span { font-size: 2rem; } }
+
+        /* Float */
+        @keyframes envFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-12px) rotate(.4deg); }
+            50% { transform: translateY(-6px) rotate(-.2deg); }
+            75% { transform: translateY(-15px) rotate(-.4deg); }
+        }
+        .float-anim { animation: envFloat 5.5s ease-in-out infinite; }
+
+        /* Badge */
+        .notif-badge {
+            position: absolute; top: -10px; right: -10px;
+            width: 26px; height: 26px;
+            background: linear-gradient(135deg, #f06292, #e91e63);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #fff; z-index: 10;
+            font-family: system-ui, -apple-system, sans-serif;
+            box-shadow: 0 3px 15px rgba(233,30,99,.55);
+            animation: badgePulse 2.5s ease-in-out infinite;
+        }
+        @media (min-width: 640px) {
+            .notif-badge { top: -12px; right: -12px; width: 30px; height: 30px; font-size: 15px; }
+        }
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.18); }
+        }
+
+        /* Shadow */
+        .env-shadow {
+            position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%);
+            width: 55%; height: 14px;
+            background: radial-gradient(ellipse, rgba(0,0,0,.22) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: shadowPulse 5.5s ease-in-out infinite;
+        }
+        @keyframes shadowPulse {
+            0%, 100% { transform: translateX(-50%) scaleX(1); opacity: .5; }
+            25% { transform: translateX(-50%) scaleX(.88); opacity: .3; }
+            50% { transform: translateX(-50%) scaleX(.92); opacity: .35; }
+            75% { transform: translateX(-50%) scaleX(.85); opacity: .28; }
+        }
+
+        /* ═══════════════════════════════════
+           MESSAGE LINES
+           ═══════════════════════════════════ */
+        .msg-line {
+            opacity: 0; transform: translateY(30px);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem; line-height: 1.9;
+            color: rgba(240,230,232,.85);
+            font-weight: 400; text-align: center;
+            text-shadow: 0 0 40px rgba(248,180,200,.06);
+            will-change: opacity, transform;
+            padding: 2px 0;
+        }
+        @media (min-width: 640px) {
+            .msg-line { font-size: 1.25rem; line-height: 2; }
+        }
+        @media (min-width: 1024px) {
+            .msg-line { font-size: 1.4rem; line-height: 2.1; }
+        }
+        .msg-line.quote {
+            font-style: italic;
+            color: rgba(248,180,200,.92);
+            font-weight: 500;
+            text-shadow: 0 0 30px rgba(233,30,99,.1);
+        }
+        .msg-break { height: 1rem; }
+        @media (min-width: 640px) { .msg-break { height: 1.8rem; } }
+        .ornament {
+            color: rgba(233,30,99,.22);
+            font-size: 1rem; letter-spacing: .8em;
+        }
+        @media (min-width: 640px) { .ornament { font-size: 1.2rem; } }
+
+        /* ═══════════════════════════════════
+           BUTTON
+           ═══════════════════════════════════ */
+        .btn-reply {
+            position: relative; display: inline-block;
+            padding: 15px 40px; border-radius: 50px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem; letter-spacing: .06em;
+            color: #0a0a0f; font-weight: 600;
+            background: linear-gradient(135deg, #f8b4c8, #e8a87c, #f48fb1);
+            background-size: 200% 200%;
+            text-decoration: none;
+            transition: all .4s cubic-bezier(.4,0,.2,1);
+            box-shadow: 0 4px 25px rgba(248,180,200,.3);
+            animation: btnGlow 3.5s ease-in-out infinite, btnGradient 6s ease-in-out infinite;
+        }
+        @media (min-width: 640px) {
+            .btn-reply { padding: 18px 50px; font-size: 1.1rem; }
+        }
+        .btn-reply:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 40px rgba(248,180,200,.5), 0 0 60px rgba(233,30,99,.15);
+        }
+        .btn-reply:active { transform: translateY(-1px) scale(.99); }
+        @keyframes btnGlow {
+            0%, 100% { box-shadow: 0 4px 25px rgba(248,180,200,.3); }
+            50% { box-shadow: 0 4px 35px rgba(248,180,200,.5), 0 0 50px rgba(248,180,200,.12); }
+        }
+        @keyframes btnGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Heartbeat */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.18); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.12); }
+            56% { transform: scale(1); }
+        }
+        .heartbeat { animation: heartbeat 2.2s ease-in-out infinite; display: inline-block; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: #07070c; }
+        ::-webkit-scrollbar-thumb { background: rgba(248,180,200,.2); border-radius: 3px; }
+
+        /* ── Floating Hearts (decorative) ── */
+        .float-heart {
+            position: absolute; pointer-events: none;
+            font-size: 14px; color: rgba(233,30,99,.15);
+            animation: heartRise 8s ease-in infinite;
+        }
+        @keyframes heartRise {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: .15; }
+            50% { opacity: .08; }
+            100% { transform: translateY(-120px) scale(.6) rotate(25deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="s1-bg">
+
+    <!-- Three.js Background -->
+    <div id="three-bg"></div>
+    <!-- Flash Overlay -->
+    <div id="flash"></div>
+    <!-- Background Music -->
+    <audio id="bgm" loop preload="auto">
+        <source src="https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" type="audio/mpeg">
+    </audio>
+
+    <main>
+
+        <!-- ═══════════════════════════════════
+             SECTION 1 — LANDING
+             ═══════════════════════════════════ -->
+        <section id="s1" class="page-section s1-bg flex-col">
+            <div id="landing-content" class="text-center px-6 sm:px-8 max-w-2xl mx-auto" style="opacity:0;">
+                <!-- Decorative top ornament -->
+                <div class="mb-8 md:mb-12">
+                    <span class="ornament">✦ · ✦ · ✦</span>
+                </div>
+
+                <p class="font-body text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-relaxed"
+                   style="color:rgba(248,180,200,.65); font-weight:300;">
+                    Selamat datang ayangku,
+                </p>
+
+                <h1 class="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mt-4 md:mt-6 font-semibold leading-tight"
+                    style="background: linear-gradient(135deg, #f8b4c8 0%, #e8a87c 40%, #f06292 70%, #f8b4c8 100%);
+                           background-size: 200% 200%;
+                           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                           background-clip: text;
+                           animation: btnGradient 8s ease-in-out infinite;">
+                    Mutia Muhalisiah
+                </h1>
+
+                <p class="font-body text-base sm:text-lg md:text-xl lg:text-2xl mt-6 md:mt-10 italic leading-relaxed"
+                   style="color:rgba(248,180,200,.5); font-weight:300;">
+                    Aku punya pesan nih buat kamu neng cantik
+                </p>
+
+                <div class="mt-10 md:mt-16">
+                    <span class="heartbeat text-3xl sm:text-4xl md:text-5xl" style="color:#e91e63;">♡</span>
+                </div>
+
+                <!-- Scroll indicator -->
+                <div id="scroll-indicator" class="mt-12 md:mt-20" style="opacity:0;">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-body text-xs tracking-widest" style="color:rgba(248,180,200,.3);">SCROLL</span>
+                        <div class="w-px h-8 relative overflow-hidden" style="background:rgba(248,180,200,.1);">
+                            <div class="w-full absolute top-0 left-0"
+                                 style="height:12px; background:rgba(248,180,200,.4);
+                                        animation: scrollLine 2s ease-in-out infinite;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                @keyframes scrollLine {
+                    0% { top: -12px; }
+                    100% { top: 100%; }
+                }
+            </style>
+        </section>
+
+        <!-- ═══════════════════════════════════
+             SECTION 2 — ENVELOPE
+             ═══════════════════════════════════ -->
+        <section id="s2" class="page-section s2-bg flex-col" style="opacity:0;">
+            <!-- Decorative glows -->
+            <div class="deco-glow" style="width:200px;height:200px;top:15%;left:10%;background:rgba(233,30,99,.03);"></div>
+            <div class="deco-glow" style="width:150px;height:150px;bottom:20%;right:10%;background:rgba(232,168,124,.03);animation-delay:-10s;"></div>
+
+            <div class="flex flex-col items-center">
+                <div class="envelope-wrap float-anim" id="envelope-wrap">
+                    <div class="relative">
+                        <div class="notif-badge" id="notif-badge">1</div>
+                        <div class="envelope" id="envelope">
+                            <div class="env-flap"></div>
+                            <div class="env-letter"><span>♡</span></div>
+                            <div class="env-body"></div>
+                            <div class="env-seal">♡</div>
+                        </div>
+                        <div class="env-shadow"></div>
+                    </div>
+                </div>
+
+                <p id="envelope-hint"
+                   class="font-body text-base sm:text-lg md:text-xl mt-14 sm:mt-16 text-center italic tracking-wide"
+                   style="color:rgba(248,180,200,.4); opacity:0;">
+                    Tap Amplop Untuk Melihat Isi Pesan!
+                </p>
+
+                <!-- Decorative bottom ornament -->
+                <div id="env-ornament" class="mt-8" style="opacity:0;">
+                    <span class="ornament">♡ · · · ♡</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════
+             SECTION 3 — MESSAGE
+             ═══════════════════════════════════ -->
+        <section id="s3" class="page-section s3-bg flex-col py-20 sm:py-28 justify-start" style="opacity:0;">
+            <!-- Decorative elements -->
+            <div class="deco-ring" style="width:400px;height:400px;top:-5%;left:-12%;"></div>
+            <div class="deco-ring" style="width:250px;height:250px;top:30%;right:-6%;"></div>
+            <div class="deco-ring" style="width:180px;height:180px;bottom:8%;left:3%;"></div>
+            <div class="deco-glow" style="width:300px;height:300px;top:10%;right:15%;background:rgba(248,180,200,.025);"></div>
+            <div class="deco-glow" style="width:250px;height:250px;bottom:15%;left:10%;background:rgba(233,30,99,.02);animation-delay:-7s;"></div>
+
+            <div id="msg-container" class="max-w-xl lg:max-w-2xl mx-auto px-6 sm:px-10 relative z-10">
+                <!-- Opening ornament -->
+                <div class="text-center mb-10 sm:mb-16 msg-line"><span class="ornament">✦ ♡ ✦</span></div>
+
+                <!-- Paragraph 1 -->
+                <p class="msg-line">Terima kasih sudah memilihku,</p>
+                <p class="msg-line">di antara begitu banyak manusia,</p>
+                <p class="msg-line">di antara begitu banyak kemungkinan.</p>
+                <p class="msg-line">Kamu memilih untuk berjalan bersamaku.</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 2 -->
+                <p class="msg-line">Dan mungkin,</p>
+                <p class="msg-line">ada sesuatu dalam diriku yang kamu lihat,</p>
+                <p class="msg-line">yang bahkan belum mampu kulihat sendiri.</p>
+                <p class="msg-line">Untuk itu, aku berterima kasih.</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 3 -->
+                <p class="msg-line">Tapi izinkan aku menitipkan satu hal:</p>
+                <p class="msg-line">Jangan mencintaiku hanya karena aku menjadi bayangan</p>
+                <p class="msg-line">tentang siapa yang kamu harapkan.</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 4 -->
+                <p class="msg-line">Kenali aku dalam nyata—</p>
+                <p class="msg-line">dengan kurangku,</p>
+                <p class="msg-line">dengan rapuhku,</p>
+                <p class="msg-line">dengan diamku,</p>
+                <p class="msg-line">dengan keras kepalaku,</p>
+                <p class="msg-line">dan dengan segala proses yang masih panjang.</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 5 -->
+                <p class="msg-line">Sebab mungkin aku tidak akan selalu menjadi</p>
+                <p class="msg-line">seperti yang kamu harapkan,</p>
+                <p class="msg-line">tapi aku ingin selalu menjadi seseorang</p>
+                <p class="msg-line">yang bersungguh-sungguh menjaga pilihanmu.</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 6 -->
+                <p class="msg-line">Dan jika suatu hari nanti kamu menemukan</p>
+                <p class="msg-line">sisi diriku yang tidak pernah kamu bayangkan,</p>
+                <p class="msg-line">semoga kamu tetap ingat ini:</p>
+                <div class="msg-break"></div>
+
+                <!-- Paragraph 7 -->
+                <p class="msg-line">Aku memang tidak sempurna.</p>
+                <p class="msg-line">Tapi sejak hari kamu memilihku,</p>
+                <p class="msg-line">aku ingin terus belajar</p>
+                <p class="msg-line">menjadi seseorang yang pantas untuk dipilih.</p>
+                <p class="msg-line">Bukan karena aku ingin terlihat sempurna di matamu,</p>
+                <p class="msg-line">tapi aku ingin, ketika suatu hari nanti</p>
+                <p class="msg-line">kamu melihatku sepenuhnya,</p>
+                <p class="msg-line">kamu bisa berkata:</p>
+                <div class="msg-break"></div>
+
+                <!-- Quote -->
+                <p class="msg-line quote">"Aku tahu dia tidak sempurna,</p>
+                <p class="msg-line quote">tapi aku tidak menyesal pernah memilihnya,</p>
+                <p class="msg-line quote">untuk melengkapi jalan cerita hidupku.</p>
+                <div class="msg-break"></div>
+                <p class="msg-line quote">Aku mencintai dan menyayanginya dengan tulus."</p>
+
+                <!-- Closing ornament -->
+                <div class="text-center mt-12 sm:mt-20 msg-line">
+                    <span class="ornament">♡ ✦ ♡</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════
+             SECTION 4 — THANK YOU
+             ═══════════════════════════════════ -->
+        <section id="s4" class="page-section s4-bg flex-col" style="opacity:0;">
+            <div class="deco-glow" style="width:300px;height:300px;top:30%;left:20%;background:rgba(233,30,99,.035);"></div>
+
+            <div class="text-center px-6 sm:px-8 max-w-xl mx-auto">
+                <!-- Decorative top -->
+                <div id="s4-ornament" class="mb-8 md:mb-12" style="opacity:0;">
+                    <span class="ornament">✦ · ♡ · ✦</span>
+                </div>
+
+                <p id="thankyou-text"
+                   class="font-body text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-relaxed"
+                   style="color:rgba(248,180,200,.85); opacity:0; font-weight:400;">
+                    Terimakasih ayang dah meluangkan<br class="hidden sm:inline"> waktu
+                    buat baca pesan dari aku
+                </p>
+
+                <div id="emoji-row" class="mt-4" style="opacity:0;">
+                    <span class="text-3xl sm:text-4xl">🥰</span>
+                </div>
+
+                <div id="btn-wrapper" class="mt-10 md:mt-14" style="opacity:0;">
+                    <a href="https://wa.me/6285691330984"
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn-reply">
+                        Balas Pesan ♡
+                    </a>
+                </div>
+
+                <div id="final-heart" class="mt-10 md:mt-14" style="opacity:0;">
+                    <span class="heartbeat text-4xl sm:text-5xl md:text-6xl" style="color:#e91e63;">♥</span>
+                </div>
+
+                <p id="from-text" class="font-body text-sm sm:text-base mt-8 italic"
+                   style="color:rgba(248,180,200,.25); opacity:0;">
+                    — Dengan penuh cinta —
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+    /* ═══════════════════════════════════════════
+       REGISTER GSAP PLUGINS
+       ═══════════════════════════════════════════ */
+    gsap.registerPlugin(ScrollToPlugin);
+
+    /* ═══════════════════════════════════════════
+       THREE.JS PARTICLE BACKGROUND
+       ═══════════════════════════════════════════ */
+    (function initParticles() {
+        const container = document.getElementById('three-bg');
+        const isMobile = window.innerWidth < 768;
+        const COUNT = isMobile ? 90 : 180;
+
+        /* Renderer */
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+        container.appendChild(renderer.domElement);
+
+        /* Scene & Camera */
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+            60, window.innerWidth / window.innerHeight, 0.1, 100
+        );
+        camera.position.z = 5;
+
+        /* Texture — soft glow circle */
+        const texCanvas = document.createElement('canvas');
+        texCanvas.width = 128; texCanvas.height = 128;
+        const tCtx = texCanvas.getContext('2d');
+        const grad = tCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
+        grad.addColorStop(0, 'rgba(255,255,255,1)');
+        grad.addColorStop(0.12, 'rgba(255,220,235,.85)');
+        grad.addColorStop(0.35, 'rgba(255,200,220,.35)');
+        grad.addColorStop(0.65, 'rgba(255,180,210,.1)');
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        tCtx.fillStyle = grad;
+        tCtx.fillRect(0, 0, 128, 128);
+        const tex = new THREE.CanvasTexture(texCanvas);
+
+        /* Petal texture */
+        const pCanvas = document.createElement('canvas');
+        pCanvas.width = 64; pCanvas.height = 64;
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.save();
+        pCtx.translate(32, 32);
+        pCtx.scale(1, 0.55);
+        pCtx.beginPath();
+        pCtx.arc(0, 0, 22, 0, Math.PI * 2);
+        pCtx.restore();
+        const pGrad = pCtx.createRadialGradient(32, 32, 0, 32, 32, 22);
+        pGrad.addColorStop(0, 'rgba(240,180,200,.9)');
+        pGrad.addColorStop(0.6, 'rgba(240,170,190,.3)');
+        pGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        pCtx.fillStyle = pGrad;
+        pCtx.fillRect(0, 0, 64, 64);
+        const petalTex = new THREE.CanvasTexture(pCanvas);
+
+        /* Color palette */
+        const palette = [
+            [1.0, 1.0, 1.0],
+            [0.97, 0.71, 0.78],
+            [0.94, 0.62, 0.72],
+            [0.91, 0.66, 0.49],
+            [0.93, 0.75, 0.82],
+            [0.88, 0.55, 0.65],
+        ];
+
+        /* Sparkle points */
+        const sGeo = new THREE.BufferGeometry();
+        const sPos = new Float32Array(COUNT * 3);
+        const sCol = new Float32Array(COUNT * 3);
+        const sVel = new Float32Array(COUNT);
+        const sOff = new Float32Array(COUNT);
+        const sAmp = new Float32Array(COUNT);
+
+        for (let i = 0; i < COUNT; i++) {
+            const i3 = i * 3;
+            sPos[i3]     = (Math.random() - 0.5) * 16;
+            sPos[i3 + 1] = (Math.random() - 0.5) * 12;
+            sPos[i3 + 2] = (Math.random() - 0.5) * 6 - 1;
+
+            const c = palette[Math.floor(Math.random() * palette.length)];
+            sCol[i3] = c[0]; sCol[i3 + 1] = c[1]; sCol[i3 + 2] = c[2];
+
+            sVel[i] = Math.random() * 0.004 + 0.001;
+            sOff[i] = Math.random() * Math.PI * 2;
+            sAmp[i] = Math.random() * 0.003 + 0.001;
+        }
+        sGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+        sGeo.setAttribute('color', new THREE.BufferAttribute(sCol, 3));
+
+        const sMat = new THREE.PointsMaterial({
+            size: 0.07,
+            map: tex,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            vertexColors: true,
+            sizeAttenuation: true,
+        });
+        scene.add(new THREE.Points(sGeo, sMat));
+
+        /* Petal points */
+        const PETAL_COUNT = Math.floor(COUNT * 0.25);
+        const pGeo = new THREE.BufferGeometry();
+        const pPos = new Float32Array(PETAL_COUNT * 3);
+        const pCol = new Float32Array(PETAL_COUNT * 3);
+        const pVel = new Float32Array(PETAL_COUNT);
+        const pOff = new Float32Array(PETAL_COUNT);
+
+        for (let i = 0; i < PETAL_COUNT; i++) {
+            const i3 = i * 3;
+            pPos[i3]     = (Math.random() - 0.5) * 16;
+            pPos[i3 + 1] = (Math.random() - 0.5) * 12;
+            pPos[i3 + 2] = (Math.random() - 0.5) * 4;
+
+            const ci = Math.floor(Math.random() * 3);
+            const c = [palette[1], palette[2], palette[5]][ci];
+            pCol[i3] = c[0]; pCol[i3 + 1] = c[1]; pCol[i3 + 2] = c[2];
+
+            pVel[i] = Math.random() * 0.003 + 0.001;
+            pOff[i] = Math.random() * Math.PI * 2;
+        }
+        pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+
+        const pMat = new THREE.PointsMaterial({
+            size: 0.18,
+            map: petalTex,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            vertexColors: true,
+            sizeAttenuation: true,
+        });
+        scene.add(new THREE.Points(pGeo, pMat));
+
+        /* Resize */
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        /* Animate */
+        let t = 0;
+        (function loop() {
+            requestAnimationFrame(loop);
+            t += 0.008;
+
+            /* Sparkles */
+            const sp = sGeo.attributes.position.array;
+            for (let i = 0; i < COUNT; i++) {
+                const i3 = i * 3;
+                sp[i3 + 1] += sVel[i];
+                sp[i3]     += Math.sin(t * 0.7 + sOff[i]) * sAmp[i];
+                if (sp[i3 + 1] > 7) { sp[i3 + 1] = -7; sp[i3] = (Math.random() - 0.5) * 16; }
+            }
+            sGeo.attributes.position.needsUpdate = true;
+
+            /* Petals */
+            const pp = pGeo.attributes.position.array;
+            for (let i = 0; i < PETAL_COUNT; i++) {
+                const i3 = i * 3;
+                pp[i3 + 1] += pVel[i];
+                pp[i3]     += Math.sin(t * 0.5 + pOff[i]) * 0.003;
+                pp[i3]     += Math.cos(t * 0.3 + pOff[i] * 1.5) * 0.001;
+                if (pp[i3 + 1] > 7) { pp[i3 + 1] = -7; pp[i3] = (Math.random() - 0.5) * 16; }
+            }
+            pGeo.attributes.position.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        })();
+    })();
+
+    /* ═══════════════════════════════════════════
+       SECTION 1 — LANDING ANIMATION
+       ═══════════════════════════════════════════ */
+    function startLanding() {
+        const tl = gsap.timeline();
+
+        tl.to('#landing-content', {
+            opacity: 1, duration: 2.5, ease: 'power2.out'
+        })
+        .from('#landing-content h1', {
+            y: 30, opacity: 0, duration: 1.5, ease: 'power3.out'
+        }, '-=2')
+        .from('#landing-content .heartbeat', {
+            scale: 0, opacity: 0, duration: 1, ease: 'back.out(2)'
+        }, '-=0.5')
+        .to('#scroll-indicator', {
+            opacity: 1, duration: 1, ease: 'power2.out'
+        }, '-=0.5')
+        .to({}, { duration: 4 })
+        .to('#landing-content', {
+            opacity: 0, y: -40, duration: 1.5, ease: 'power2.in'
+        })
+        .add(() => showEnvelopeSection());
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION 2 — ENVELOPE INTERACTION
+       ═══════════════════════════════════════════ */
+    let envelopeClicked = false;
+
+    function showEnvelopeSection() {
+        document.getElementById('s1').style.display = 'none';
+
+        gsap.to('#s2', {
+            opacity: 1, duration: 1.5, ease: 'power2.out',
+            onStart: () => {
+                window.scrollTo(0, 0);
+                document.getElementById('s2').scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        gsap.timeline({ delay: 0.8 })
+            .from('.envelope-wrap', {
+                scale: 0.8, opacity: 0, duration: 1.2, ease: 'back.out(1.4)'
+            })
+            .to('#envelope-hint', {
+                opacity: 1, duration: 1, ease: 'power2.out'
+            }, '-=0.3')
+            .to('#env-ornament', {
+                opacity: 1, duration: 0.8, ease: 'power2.out'
+            }, '-=0.5');
+    }
+
+    document.getElementById('envelope-wrap').addEventListener('click', function() {
+        if (envelopeClicked) return;
+        envelopeClicked = true;
+        openEnvelope();
+    });
+
+    function openEnvelope() {
+        const wrap = document.getElementById('envelope-wrap');
+        const env  = document.getElementById('envelope');
+        const bgm  = document.getElementById('bgm');
+
+        /* Play music */
+        bgm.volume = 0.3;
+        const playPromise = bgm.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                /* Autoplay blocked — will work on next user interaction */
+            });
+        }
+
+        const tl = gsap.timeline();
+
+        tl
+        /* Fade hint and ornament */
+        .to('#envelope-hint', { opacity: 0, duration: 0.4, ease: 'power2.in' })
+        .to('#env-ornament', { opacity: 0, duration: 0.3, ease: 'power2.in' }, '<')
+        /* Badge disappear */
+        .to('#notif-badge', {
+            scale: 0, opacity: 0, duration: 0.35, ease: 'back.in(2)'
+        }, '-=0.1')
+        /* Stop floating */
+        .add(() => {
+            wrap.classList.remove('float-anim');
+            gsap.set(wrap, { y: 0 });
+        })
+        /* Open envelope */
+        .add(() => { env.classList.add('opened'); })
+        .to({}, { duration: 1.5 })
+        /* Envelope zoom & fade */
+        .to(wrap, {
+            scale: 3.5, opacity: 0, duration: 1.8, ease: 'power3.in',
+            filter: 'blur(4px)'
+        })
+        /* Flash */
+        .to('#flash', {
+            opacity: 1, duration: 0.7, ease: 'power2.in'
+        }, '-=1.2')
+        /* Transition to section 3 */
+        .add(() => showMessageSection())
+        .to('#flash', {
+            opacity: 0, duration: 1.5, ease: 'power2.out'
+        }, '+=0.3');
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION 3 — MESSAGE REVEAL
+       ═══════════════════════════════════════════ */
+    function showMessageSection() {
+        document.getElementById('s2').style.display = 'none';
+
+        gsap.to('#s3', {
+            opacity: 1, duration: 1.2, ease: 'power2.out',
+            onStart: () => {
+                window.scrollTo(0, 0);
+            }
+        });
+
+        setTimeout(playMessage, 2200);
+    }
+
+    function playMessage() {
+        const lines = document.querySelectorAll('#msg-container .msg-line');
+        const s3 = document.getElementById('s3');
+        const totalLines = lines.length;
+        const stagger = 0.7; /* seconds between each line */
+        const totalDuration = (totalLines - 1) * stagger + 1.5;
+
+        /* Calculate scroll target */
+        const scrollTarget = s3.scrollHeight - window.innerHeight + 80;
+        const safeScroll = Math.max(0, scrollTarget);
+
+        const tl = gsap.timeline({
+            onComplete: () => {
+                setTimeout(() => {
+                    gsap.to('#s3', {
+                        opacity: 0, duration: 1.5, ease: 'power2.in',
+                        onComplete: () => showThankYou()
+                    });
+                }, 3000);
+            }
+        });
+
+        /* Smooth auto-scroll synced with message */
+        if (safeScroll > 100) {
+            tl.to(window, {
+                scrollTo: { y: safeScroll, autoKill: false },
+                duration: totalDuration,
+                ease: 'none'
+            }, 0);
+        }
+
+        /* Reveal each line */
+        lines.forEach((line, i) => {
+            const isQuote = line.classList.contains('quote');
+            const isOrnament = line.querySelector('.ornament');
+            const delay = i * stagger;
+
+            tl.to(line, {
+                opacity: 1, y: 0,
+                duration: isOrnament ? 1.2 : (isQuote ? 1.2 : 1),
+                ease: isQuote ? 'power1.out' : 'power2.out'
+            }, delay);
+        });
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION 4 — THANK YOU
+       ═══════════════════════════════════════════ */
+    function showThankYou() {
+        document.getElementById('s3').style.display = 'none';
+        window.scrollTo(0, 0);
+
+        gsap.to('#s4', {
+            opacity: 1, duration: 1.5, ease: 'power2.out'
+        });
+
+        const tl = gsap.timeline({ delay: 0.5 });
+
+        tl.to('#s4-ornament', {
+            opacity: 1, duration: 1, ease: 'power2.out'
+        })
+        .to('#thankyou-text', {
+            opacity: 1, y: 0, duration: 1.5, ease: 'power2.out'
+        }, '-=0.5')
+        .fromTo('#thankyou-text', { y: 30 }, { y: 0, duration: 1.5, ease: 'power2.out' }, '<')
+        .to('#emoji-row', {
+            opacity: 1, duration: 0.8, ease: 'back.out(1.5)'
+        }, '-=0.5')
+        .fromTo('#emoji-row', { scale: 0.5 }, { scale: 1, duration: 0.8, ease: 'back.out(1.5)' }, '<')
+        .to('#btn-wrapper', {
+            opacity: 1, duration: 1, ease: 'power2.out'
+        }, '-=0.2')
+        .fromTo('#btn-wrapper', { y: 20 }, { y: 0, duration: 1, ease: 'power2.out' }, '<')
+        .to('#final-heart', {
+            opacity: 1, duration: 1, ease: 'power2.out'
+        }, '-=0.3')
+        .fromTo('#final-heart', { scale: 0.3 }, { scale: 1, duration: 1.2, ease: 'back.out(2)' }, '<')
+        .to('#from-text', {
+            opacity: 1, duration: 1.5, ease: 'power2.out'
+        }, '-=0.5');
+
+        /* Floating hearts decoration */
+        setTimeout(createFloatingHearts, 1500);
+    }
+
+    function createFloatingHearts() {
+        const s4 = document.getElementById('s4');
+        const hearts = ['♡', '♥', '✦', '·'];
+        const interval = setInterval(() => {
+            const el = document.createElement('span');
+            el.className = 'float-heart';
+            el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            el.style.left = Math.random() * 100 + '%';
+            el.style.bottom = '10%';
+            el.style.fontSize = (10 + Math.random() * 14) + 'px';
+            el.style.animationDuration = (5 + Math.random() * 6) + 's';
+            s4.appendChild(el);
+            setTimeout(() => el.remove(), 12000);
+        }, 800);
+        
+        /* Stop after 20 seconds */
+        setTimeout(() => clearInterval(interval), 20000);
+    }
+
+    /* ═══════════════════════════════════════════
+       INITIALIZATION
+       ═══════════════════════════════════════════ */
+    window.addEventListener('load', () => {
+        /* Brief loading delay for fonts & assets */
+        setTimeout(startLanding, 800);
+    });
+
+    /* Prevent scroll during animations */
+    document.addEventListener('touchmove', function(e) {
+        /* Allow default behavior */
+    }, { passive: true });
+    </script>
+</body>
+</html>
+
+        /* Stop after 20 seconds */
+        setTimeout(() => clearInterval(interval), 20000);
+    }
+
+    /* ═══════════════════════════════════════════
+       INITIALIZATION
+       ═══════════════════════════════════════════ */
+    window.addEventListener('load', () => {
+        /* Brief loading delay for fonts & assets */
+        setTimeout(startLanding, 800);
+    });
+
+    /* Prevent scroll during animations */
+    document.addEventListener('touchmove', function(e) {
+        /* Allow default behavior */
+    }, { passive: true });
+    </script>
+</body>
+</html>
